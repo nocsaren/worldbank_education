@@ -9,7 +9,6 @@ id_list <-
   .[[2]] %>%
   select(id, name, sourceNote) %>%
   rename(id_code = id, id_name = name, id_about = sourceNote) %>% 
-#  filter(str_detect(id_name,"calories") | (str_detect(id_name,"protein"))| (str_detect(id_name,"vitamin"))) %>% 
   select(id_code, id_name, id_about) %>%
   as_tibble()
 

@@ -2,37 +2,134 @@
 title: "Worldbank Education"
 author: "Burak Can Serdar"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document:
+    css: "styles.css" 
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(ggplot2)
+```
+We can use this function to get data from Worldbank API:
+```{r getting, eval=FALSE}
+library(tidyverse)
+library(httr)
+library(jsonlite)
 
-pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds")
-expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds")
+get_specific_id <- function(country_1_code, indicator_code, number_values = 20000) {
+  url <- paste0("https://api.worldbank.org/v2/country/", country_1_code, "/indicator/", indicator_code, "?format=json&per_page=", number_values) # forms an URL based on what we want in arguments
+  
+  result <- GET(url) # We use the URL to GET the result
+  
+  if (http_type(result) == "application/json") { # IF ordinary API response
+    data <- content(result, as = "text") %>%
+      fromJSON() %>%
+      .[[2]] %>% # generally the juicy parts are at [2] 
+      na.omit(value) %>% # cleaning rows with NA values 
+      as_tibble()
+    
+    df_name_var <- paste0(indicator_code, "_", country_1_code) # dynamic dataframe name based on indicator and country
+    assign(df_name_var, data, envir = .GlobalEnv) # assigns data to that dataframe and to environment
+    saveRDS(data, file = paste0("./rds/", df_name_var, "_", Sys.Date(), ".rds")) # and outputs with a dynamic filename
+    
+  } else { # ELSE with erroneous API response
+    error_msg <- content(result, as = "text") 
+    cat("API Error:", error_msg, "\n")
+    return(NULL)
+  }
+}
+```
+It creates a file named ./rds/"indicator"_"date".rds for later use. But how do we know which indicators are available? With this function:
 
-#clean & join & cleanenv
+```{r indicators, eval=FALSE}
+library(tidyverse)
+library(httr)
+library(jsonlite)
 
-cleaned_pisa <- pisa_results %>% 
-  mutate(country = country$value) %>% 
+id_list <- 
+  GET("https://api.worldbank.org/v2/indicator?format=json&per_page=21020") %>%
+  content(as = "text") %>%
+  fromJSON() %>%
+  .[[2]] %>%
+  select(id, name, sourceNote) %>%
+  rename(id_code = id, id_name = name, id_about = sourceNote) %>% # modifies to more useful column names, sourceNote gives useful short explanations on indicators, better keep them
+  select(id_code, id_name, id_about) %>%
+  as_tibble()
+
+save(id_list, 
+     file = "id_list.rda") # outputs as rda
+```
+It seems there are 21020 of them. We need a way to search to be able to quickly browse through them. This function searches through the names of indicators for maximum of 3 words bound with logical AND:
+
+```{r search, eval=FALSE}
+library(tidyverse)
+
+search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
+  load("id_list.rda")
+  
+  search_result <- id_list %>%
+    filter(
+      str_detect(id_name, regex(param_1, ignore_case = TRUE)) &
+        if (!is.null(param_2)) str_detect(id_name, regex(param_2, ignore_case = TRUE)) else TRUE &
+        if (!is.null(param_3)) str_detect(id_name, regex(param_3, ignore_case = TRUE)) else TRUE
+    ) %>%
+    select(id_code, id_name, id_about) %>%
+    as_tibble()
+  
+  assign("search_result", search_result, envir = .GlobalEnv)
+  
+  return(search_result)
+}
+```
+Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will join
+```{r cleanup}
+pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning meaningful names 
+head(pisa_results) # just to show how the dataframe looks like 
+expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds") # assigning meaningful names 
+head(expenditure) # just to show how the dataframe looks like
+
+cleaned_pisa <- pisa_results %>% # preparing the dataframe for join
+  mutate(country = countryiso3code) %>% 
   rename(value_pisa = value) %>% 
   select(country, date, value_pisa)
   
-
-cleaned_exp <- expenditure %>% 
-  mutate(country = country$value) %>% 
+head(cleaned_pisa) # new state
+cleaned_exp <- expenditure %>% # preparing the dataframe for join
+  mutate(country = countryiso3code) %>% 
   rename(value_exp = value) %>% 
   select(country, date, value_exp)
-
-joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date"))
-
-rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp"))
+head(cleaned_exp) # new state
+joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date")) # inner joining the two dataframes by their "country" and "date" column
+head(joined) # joined dataframe
+rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # clean the environment from all those dataframes we created
 
 ```
 
 
 
-## Most useful quality to have to survive in Titanic
+## Msaffasfasfasanic
 
-Here, I worked on the dataset I've got from [Kaggle](https://www.kaggle.com) from [James Leslie's Titanic Cleaned data](https://www.kaggle.com/datasets/jamesleslie/titanic-cleaned-data).
+asfasasfasfsaffsa
 
+```{r regress}
+
+model <- lm(value_pisa ~value_exp, joined) # This is the part we actually create our model. we ask if "value_pisa" values depend on "value_exp" values in the "joined" dataframe. 
+summary(model)
+
+ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
+  geom_point(mapping = aes(color = country)) +
+  geom_smooth(method = "lm", se = TRUE) +
+  guides(color = "none")+
+  labs(
+    title = "Expenditure of Education (%) vs. PISA Reading Scores",
+    x = "Expenditure",
+    y = "PISA Reading Scores"
+  )
+
+```
+
+asfasfas
+
+
+sfafasasf
