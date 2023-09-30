@@ -8,9 +8,7 @@ output:
     css: "styles.css" 
 ---
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  fig.path = "README_figs/README-"
-)
+knitr::opts_chunk$set(collapse=TRUE, comment="##", fig.retina=2, fig.path = "README_figs/README-")
 ```
 
 ```{r setup, include=FALSE}

@@ -9,6 +9,7 @@ output:
 ---
 
 
+
 We can use this function to get data from Worldbank API:
 
 ```r
@@ -88,9 +89,6 @@ Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and educat
 ```r
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning meaningful names 
 head(pisa_results) # just to show how the dataframe looks like 
-```
-
-```
 ## # A tibble: 6 × 8
 ##   indicator$id country$id countryiso3code date  value unit  obs_status decimal
 ##   <chr>        <chr>      <chr>           <chr> <dbl> <chr> <chr>        <int>
@@ -101,14 +99,8 @@ head(pisa_results) # just to show how the dataframe looks like
 ## 5 LO.PISA.REA  AL         ALB             2009   385. ""    ""               0
 ## 6 LO.PISA.REA  AL         ALB             2000   349. ""    ""               0
 ## # ℹ 2 more variables: indicator$value <chr>, country$value <chr>
-```
-
-```r
 expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds") # assigning meaningful names 
 head(expenditure) # just to show how the dataframe looks like
-```
-
-```
 ## # A tibble: 6 × 8
 ##   indicator$id   country$id countryiso3code date  value unit  obs_status decimal
 ##   <chr>          <chr>      <chr>           <chr> <dbl> <chr> <chr>        <int>
@@ -119,18 +111,13 @@ head(expenditure) # just to show how the dataframe looks like
 ## 5 SE.XPD.TOTL.G… ZH         AFE             2016   4.82 ""    ""               1
 ## 6 SE.XPD.TOTL.G… ZH         AFE             2015   4.82 ""    ""               1
 ## # ℹ 2 more variables: indicator$value <chr>, country$value <chr>
-```
 
-```r
 cleaned_pisa <- pisa_results %>% # preparing the dataframe for join
   mutate(country = countryiso3code) %>% 
   rename(value_pisa = value) %>% 
   select(country, date, value_pisa)
   
 head(cleaned_pisa) # new state
-```
-
-```
 ## # A tibble: 6 × 3
 ##   country date  value_pisa
 ##   <chr>   <chr>      <dbl>
@@ -140,17 +127,11 @@ head(cleaned_pisa) # new state
 ## 4 ALB     2012        394.
 ## 5 ALB     2009        385.
 ## 6 ALB     2000        349.
-```
-
-```r
 cleaned_exp <- expenditure %>% # preparing the dataframe for join
   mutate(country = countryiso3code) %>% 
   rename(value_exp = value) %>% 
   select(country, date, value_exp)
 head(cleaned_exp) # new state
-```
-
-```
 ## # A tibble: 6 × 3
 ##   country date  value_exp
 ##   <chr>   <chr>     <dbl>
@@ -160,14 +141,8 @@ head(cleaned_exp) # new state
 ## 4 AFE     2017       4.86
 ## 5 AFE     2016       4.82
 ## 6 AFE     2015       4.82
-```
-
-```r
 joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date")) # inner joining the two dataframes by their "country" and "date" column
 head(joined) # joined dataframe
-```
-
-```
 ## # A tibble: 6 × 4
 ##   country date  value_pisa value_exp
 ##   <chr>   <chr>      <dbl>     <dbl>
@@ -177,9 +152,6 @@ head(joined) # joined dataframe
 ## 4 ALB     2012        394.      2.93
 ## 5 ALB     2000        349.      3.43
 ## 6 DZA     2015        350.      7.96
-```
-
-```r
 rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # clean the environment from all those dataframes we created
 ```
 
@@ -191,11 +163,9 @@ asfasasfasfsaffsa
 
 
 ```r
+
 model <- lm(value_pisa ~value_exp, joined) # This is the part we actually create our model. we ask if "value_pisa" values depend on "value_exp" values in the "joined" dataframe. 
 summary(model)
-```
-
-```
 ## 
 ## Call:
 ## lm(formula = value_pisa ~ value_exp, data = joined)
@@ -214,9 +184,7 @@ summary(model)
 ## Residual standard error: 49.36 on 357 degrees of freedom
 ## Multiple R-squared:  0.04612,	Adjusted R-squared:  0.04344 
 ## F-statistic: 17.26 on 1 and 357 DF,  p-value: 4.085e-05
-```
 
-```r
 ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
   geom_point(mapping = aes(color = country)) +
   geom_smooth(method = "lm", se = TRUE) +
@@ -226,13 +194,10 @@ ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
     x = "Expenditure",
     y = "PISA Reading Scores"
   )
-```
-
-```
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](worldbank_files/figure-html/regress-1.png)<!-- -->
+<img src="README_figs/README-regress-1.png" width="672" />
 
 asfasfas
 
