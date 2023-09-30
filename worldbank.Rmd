@@ -1,0 +1,38 @@
+---
+title: "Worldbank Education"
+author: "Burak Can Serdar"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds")
+expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds")
+
+#clean & join & cleanenv
+
+cleaned_pisa <- pisa_results %>% 
+  mutate(country = country$value) %>% 
+  rename(value_pisa = value) %>% 
+  select(country, date, value_pisa)
+  
+
+cleaned_exp <- expenditure %>% 
+  mutate(country = country$value) %>% 
+  rename(value_exp = value) %>% 
+  select(country, date, value_exp)
+
+joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date"))
+
+rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp"))
+
+```
+
+
+
+## Most useful quality to have to survive in Titanic
+
+Here, I worked on the dataset I've got from [Kaggle](https://www.kaggle.com) from [James Leslie's Titanic Cleaned data](https://www.kaggle.com/datasets/jamesleslie/titanic-cleaned-data).
+

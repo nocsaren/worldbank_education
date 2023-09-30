@@ -16,7 +16,7 @@ get_specific_id <- function(country_1_code, indicator_code, number_values = 2000
     
     df_name_var <- paste0(indicator_code, "_", country_1_code)
     assign(df_name_var, data, envir = .GlobalEnv)
-    saveRDS(data, file = paste0("./rdas/", df_name_var, "_", Sys.Date(), ".rds"))
+    saveRDS(data, file = paste0("./rds/", df_name_var, "_", Sys.Date(), ".rds"))
     
   } else {
     error_msg <- content(result, as = "text")
