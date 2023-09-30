@@ -1,18 +1,11 @@
----
-title: "Worldbank Education"
-author: "Burak Can Serdar"
-date: "2023-10-01"
-output: 
-  html_document:
-    keep_md: true
-    css: "styles.css" 
----
-
-
+Worldbank Education
+================
+Burak Can Serdar
+2023-10-01
 
 We can use this function to get data from Worldbank API:
 
-```r
+``` r
 library(tidyverse)
 library(httr)
 library(jsonlite)
@@ -40,10 +33,11 @@ get_specific_id <- function(country_1_code, indicator_code, number_values = 2000
   }
 }
 ```
-It creates a file named ./rds/"indicator"_"date".rds for later use. But how do we know which indicators are available? With this function:
 
+It creates a file named ./rds/“indicator”\_“date”.rds for later use. But
+how do we know which indicators are available? With this function:
 
-```r
+``` r
 library(tidyverse)
 library(httr)
 library(jsonlite)
@@ -61,10 +55,12 @@ id_list <-
 save(id_list, 
      file = "id_list.rda") # outputs as rda
 ```
-It seems there are 21020 of them. We need a way to search to be able to quickly browse through them. This function searches through the names of indicators for maximum of 3 words bound with logical AND:
 
+It seems there are 21020 of them. We need a way to search to be able to
+quickly browse through them. This function searches through the names of
+indicators for maximum of 3 words bound with logical AND:
 
-```r
+``` r
 library(tidyverse)
 
 search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
@@ -84,9 +80,12 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
   return(search_result)
 }
 ```
-Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will join
 
-```r
+Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds)
+and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we
+will join
+
+``` r
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning meaningful names 
 head(pisa_results) # just to show how the dataframe looks like 
 ## # A tibble: 6 × 8
@@ -155,14 +154,11 @@ head(joined) # joined dataframe
 rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # clean the environment from all those dataframes we created
 ```
 
-
-
 ## Msaffasfasfasanic
 
 asfasasfasfsaffsa
 
-
-```r
+``` r
 
 model <- lm(value_pisa ~value_exp, joined) # This is the part we actually create our model. we ask if "value_pisa" values depend on "value_exp" values in the "joined" dataframe. 
 summary(model)
@@ -182,7 +178,7 @@ summary(model)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 49.36 on 357 degrees of freedom
-## Multiple R-squared:  0.04612,	Adjusted R-squared:  0.04344 
+## Multiple R-squared:  0.04612,    Adjusted R-squared:  0.04344 
 ## F-statistic: 17.26 on 1 and 357 DF,  p-value: 4.085e-05
 
 ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
@@ -200,6 +196,5 @@ ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
 <img src="README_figs/README-regress-1.png" width="672" />
 
 asfasfas
-
 
 sfafasasf
