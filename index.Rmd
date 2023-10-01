@@ -14,7 +14,7 @@ library(tidyverse)
 library(ggplot2)
 ```
 ## Introduction
-In this analysis, we explore the relationship between two significant factors: PISA Reading Scores and Education Expenditure as a percentage of Gross Domestic Product (GDP). We aim to determine whether there exists a statistically significant association between these two variables. The analysis employs a Linear Regression Model, allowing us to examine the influence of Education Expenditure on PISA Reading Scores for various countries. The model's coefficients and statistical insights will provide us with valuable information on the relationship between these variables.
+In this analysis, we explore the relationship between two significant factors: PISA Reading Scores and Education Expenditure as a percentage of Gross Domestic Product (GDP). We aim to determine whether there exists a statistically significant association between these two variables. The analysis employs a Linear Regression Model, allowing us to examine the influence of Education Expenditure on PISA Reading Scores for various countries. The model's coefficients and statistical insights will provide valuable information on the relationship between these variables.
 
 ```{r, intro, echo=FALSE} 
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds")
@@ -49,7 +49,7 @@ ggplot(joined)+
   )
 ```
 
-To begin our analysis, we obtain data from the Worldbank API. We have chosen to investigate two key indicators: PISA Reading Scores and Education Expenditure (% of GDP). To efficiently retrieve data from the API, we have created a custom R function, `get_specific_id`. This function constructs the appropriate URL and fetches data from the Worldbank API. It also saves the data as RDS files for later use. Additionally, we provide a function, `search_id`, to search for specific Worldbank indicators based on keywords.
+To begin our analysis, we obtain data from the World Bank API. We have chosen to investigate two key indicators: PISA Reading Scores and Education Expenditure (% of GDP). To efficiently retrieve data from the API, we have created a custom R function, `get_specific_id`. This function constructs the appropriate URL and fetches data from the World Bank API. It also saves the data as RDS files for later use. Additionally, we provide a function, `search_id`, to search for specific World Bank indicators based on keywords.
 
 ## Getting Data
 #### GET function
@@ -107,7 +107,7 @@ save(id_list,
 ```
 
 #### Searching through Indicators
-It seems there are 21020 of them. We need a way to search to be able to quickly browse through them. This function searches through the names of indicators for maximum of 3 words bound with logical AND:
+It seems there are 21020 of them. We need a way to search to quickly browse through them. This function searches through the names of indicators for a maximum of 3 words bound with logical AND:
 
 ```{r search, eval=FALSE}
 library(tidyverse)
@@ -131,13 +131,13 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
 ```
 
 ## Preparing Data
-After obtaining the data, we import it into R as dataframes, creating two essential datasets: PISA Reading Scores and Education Expenditure. These datasets are saved as RDS files to ensure easy access for future analysis. We also perform some initial data cleaning and join these datasets based on common country-date pairs, creating a comprehensive dataset for our analysis. The data preparation phase ensures that we work with high-quality data for our regression analysis.
+After obtaining the data, we import it into R as data frames, creating two essential data sets: PISA Reading Scores and Education Expenditure. These data sets are saved as RDS files to ensure easy access for future analysis. We also perform initial data cleaning and join these data sets based on common country-date pairs, creating a comprehensive data set for our analysis. The data preparation phase ensures that we work with high-quality data for our regression analysis.
 
 We chose our indicators PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them. 
 
-We could do all this dynamically, getting data in real time from the API, but it will cause unnecessary delay in each run of our code and put unnecessary load on remote server. Data we are getting is not that dynamic anyway, so it makes no sense to check it for updates in each run. 
+We could do all this dynamically, getting data in real-time from the API, but it will cause unnecessary delay in each run of our code and put a load on the remote server. The data we are getting is not that dynamic anyway, so it does not make sense to check it for updates in each run. 
 
-Now that we have the rds files, we will import them to R as dataframes:
+Now that we have the RDS files, we will import them to R as data frames:
 
 ```{r startup pisa}
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning pisa as dataframe
@@ -158,7 +158,7 @@ And expenditures look like this:
 head(expenditure)
 ```
 #### Join
-Now, we have our pisa_results and expenditure dataframes, we will prepare these data for our analysis. A quick glance shows us that some country-date data overlaps in both dataframes, some do not. We will only use countries and dates that exist in bpth data, therefore we have to do an inner join . Before that, some fine tuning in our dataframes like changing the column names so that we will know which columns is which after the join:
+Now that we have our pisa_results and expenditure data frames, we will prepare these data for our analysis. A quick glance shows us that some country-date data overlaps in both data frames, and some do not. We will only use countries and dates that exist in both data; therefore, we have to do an inner join. Before that, some fine-tuning in our data frames like changing the column names so that we will know which columns are which after the join:
 
 ```{r cleanup}
 cleaned_pisa <- pisa_results %>% # preparing the dataframe for join
@@ -174,13 +174,13 @@ joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date")) # inn
 
 rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # we won't need all those dataframes we created anymore.
 ```
-The joined dataframe looks like this:
+The joined data frame looks like this:
 ``` {r joined, echo=FALSE}
 head(joined)
 ```
 ## Analysis
 
-In this section, we delve into the heart of our investigation, exploring the relationship between two variables—PISA Reading Scores and Education Expenditure. We aim to determine whether there exists a statistically significant association between these two factors.
+In this section, we delve into the heart of our investigation, exploring the relationship between two variables—PISA Reading Scores and Education Expenditure. We aim to determine whether there is a statistically significant association between these two factors.
 
 #### Linear Regression Model
 
@@ -236,9 +236,9 @@ In this analysis, we've conducted a regression analysis in R to examine the rela
 
 To kickstart our analysis, we began by introducing the context and purpose of our study. We aimed to understand whether there's a statistically significant association between PISA Reading Scores and Education Expenditure, which is crucial for making informed decisions in the field of education.
 
-Before diving into the analysis, we showed how to efficiently retrieve data from the Worldbank API. We introduced a custom R function, `get_specific_id`, which allows us to fetch relevant data, saving it as RDS files for easy access in the future. Additionally, we provided the `search_id` function to search for specific Worldbank indicators based on keywords.
+Before diving into the analysis, we showed how to efficiently retrieve data from the World Bank API. We introduced a custom R function, `get_specific_id`, which allows us to fetch relevant data, saving it as RDS files for easy access in the future. Additionally, we provided the `search_id` function to search for specific World Bank indicators based on keywords.
 
-Next, we imported the obtained data into R as dataframes, creating two essential datasets: PISA Reading Scores and Education Expenditure. These datasets were saved as RDS files for easy access in subsequent analysis. We conducted initial data cleaning and merged these datasets based on common country-date pairs, creating a comprehensive dataset for our analysis.
+Next, we imported the obtained data into R as data frames, creating two essential data sets: PISA Reading Scores and Education Expenditure. These data sets were saved as RDS files for easy access in subsequent analysis. We conducted initial data cleaning and merged these data sets based on common country-date pairs, creating a comprehensive data set for our analysis.
 
 In the analysis section, we delved into the core of our investigation—the relationship between PISA Reading Scores and Education Expenditure. We highlighted the use of a Linear Regression Model to assess the influence of Education Expenditure on PISA Reading Scores for different countries.
 
