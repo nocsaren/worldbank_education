@@ -2,18 +2,18 @@
 title: "Worldbank Education"
 author: "Burak Can Serdar"
 date: "`r Sys.Date()`"
-output: 
-  github_document:
+output:
+  html_document:
+    css: "styles.css"
 ---
-```{r, echo = FALSE}
-knitr::opts_chunk$set(collapse=TRUE, comment="##", fig.retina=2, fig.path = "README_figs/README-")
-```
 
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(ggplot2)
 ```
+
 We can use this function to get data from Worldbank API:
+
 ```{r getting, eval=FALSE}
 library(tidyverse)
 library(httr)
@@ -42,7 +42,8 @@ get_specific_id <- function(country_1_code, indicator_code, number_values = 2000
   }
 }
 ```
-It creates a file named ./rds/"indicator"_"date".rds for later use. But how do we know which indicators are available? With this function:
+
+It creates a file named ./rds/"indicator"\_"date".rds for later use. But how do we know which indicators are available? With this function:
 
 ```{r indicators, eval=FALSE}
 library(tidyverse)
@@ -62,6 +63,7 @@ id_list <-
 save(id_list, 
      file = "id_list.rda") # outputs as rda
 ```
+
 It seems there are 21020 of them. We need a way to search to be able to quickly browse through them. This function searches through the names of indicators for maximum of 3 words bound with logical AND:
 
 ```{r search, eval=FALSE}
@@ -84,7 +86,9 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
   return(search_result)
 }
 ```
+
 Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will join
+
 ```{r cleanup}
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning meaningful names 
 head(pisa_results) # just to show how the dataframe looks like 
@@ -108,8 +112,6 @@ rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # cle
 
 ```
 
-
-
 ## Msaffasfasfasanic
 
 asfasasfasfsaffsa
@@ -132,6 +134,5 @@ ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
 ```
 
 asfasfas
-
 
 sfafasasf

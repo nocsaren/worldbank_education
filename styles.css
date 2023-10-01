@@ -2,7 +2,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
-    color: #ff0000;
+    color: #ffffff;
     margin: 20px;
 }
 
@@ -29,7 +29,7 @@ p {
 /* Code Blocks */
 pre, code {
     font-family: 'Courier New', monospace;
-    background-color: #ffffff;
+    background-color: #grey;
     padding: 10px;
 }
 
