@@ -1,5 +1,5 @@
 ---
-title: "Worldbank Education"
+title: "Linear Model with Worldbank Data"
 author: "Burak Can Serdar"
 date: "`r Sys.Date()`"
 output:
@@ -55,8 +55,8 @@ id_list <-
   content(as = "text") %>%
   fromJSON() %>%
   .[[2]] %>%
-  select(id, name, sourceNote) %>%
-  rename(id_code = id, id_name = name, id_about = sourceNote) %>% # modifies to more useful column names, sourceNote gives useful short explanations on indicators, better keep them
+  select(id, name, sourceNote) %>%  # sourceNote gives useful short explanations on indicators, better keep them
+  rename(id_code = id, id_name = name, id_about = sourceNote) %>% # modifies to more useful column names
   select(id_code, id_name, id_about) %>%
   as_tibble()
 
@@ -81,7 +81,7 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
     select(id_code, id_name, id_about) %>%
     as_tibble()
   
-  assign("search_result", search_result, envir = .GlobalEnv)
+  assign("search_result", search_result, envir = .GlobalEnv) # this creates a tibble named search_results on global environment
   
   return(search_result)
 }
