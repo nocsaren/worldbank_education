@@ -361,8 +361,13 @@ Data</h1>
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>%explanation% ## Getting Data #### GET function We can use this
-function to get data from Worldbank API:</p>
+<p>%explanation%</p>
+</div>
+<div id="getting-data" class="section level2">
+<h2>Getting Data</h2>
+<div id="get-function" class="section level4">
+<h4>GET function</h4>
+<p>We can use this function to get data from Worldbank API:</p>
 <pre class="r"><code>library(tidyverse)
 library(httr)
 library(jsonlite)
@@ -389,6 +394,7 @@ get_specific_id &lt;- function(country_1_code, indicator_code, number_values = 2
     return(NULL)
   }
 }</code></pre>
+</div>
 <div id="finding-indicator-codes" class="section level4">
 <h4>Finding Indicator Codes</h4>
 <p>It creates a file named ./rds/“indicator”_“date”.rds for later use.

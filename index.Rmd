@@ -30,6 +30,7 @@ joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date"))
 
 ```
 %explanation%
+
 ## Getting Data
 #### GET function
 We can use this function to get data from Worldbank API:
