@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-10-01" />
 
-<title>Worldbank Education</title>
+<title>Linear Model with Worldbank Data</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -254,7 +254,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">body {font-family: Arial, sans-serif;background-color: #f0f0f0;color: #ffffff;margin: 20px;}h1, h2, h3, h4, h5, h6 {color: #0066cc;}a {color: #0066cc;text-decoration: none;}a:hover {text-decoration: underline;}p {line-height: 1.5;}pre, code {font-family: 'Courier New', monospace;background-color: #grey;padding: 10px;}ul, ol {margin-left: 20px;}img {max-width: 100%;}table {border-collapse: collapse;width: 100%;}table, th, td {border: 1px solid #ddd;}th, td {padding: 8px;text-align: left;}.custom-class {color: #ff6600;font-weight: bold;}</style>
+<style type="text/css">body {font-family: Arial, sans-serif;background-color: #f0f0f0;color: #000000;margin: 20px;}h1, h2, h3, h4, h5, h6 {color: #0066cc;}a {color: #0066cc;text-decoration: none;}a:hover {text-decoration: underline;}p {line-height: 1.5;}pre, code {font-family: 'Courier New', monospace;background-color: #grey;padding: 10px;}ul, ol {margin-left: 20px;}img {max-width: 100%;}table {border-collapse: collapse;width: 100%;}table, th, td {border: 1px solid #ddd;}th, td {padding: 8px;text-align: left;}.custom-class {color: #ff6600;font-weight: bold;}</style>
 
 
 
@@ -351,7 +351,7 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Worldbank Education</h1>
+<h1 class="title toc-ignore">Linear Model with Worldbank Data</h1>
 <h4 class="author">Burak Can Serdar</h4>
 <h4 class="date">2023-10-01</h4>
 
@@ -397,8 +397,8 @@ id_list &lt;-
   content(as = &quot;text&quot;) %&gt;%
   fromJSON() %&gt;%
   .[[2]] %&gt;%
-  select(id, name, sourceNote) %&gt;%
-  rename(id_code = id, id_name = name, id_about = sourceNote) %&gt;% # modifies to more useful column names, sourceNote gives useful short explanations on indicators, better keep them
+  select(id, name, sourceNote) %&gt;%  # sourceNote gives useful short explanations on indicators, better keep them
+  rename(id_code = id, id_name = name, id_about = sourceNote) %&gt;% # modifies to more useful column names
   select(id_code, id_name, id_about) %&gt;%
   as_tibble()
 
@@ -421,15 +421,22 @@ search_id &lt;- function(param_1, param_2 = NULL, param_3 = NULL) {
     select(id_code, id_name, id_about) %&gt;%
     as_tibble()
   
-  assign(&quot;search_result&quot;, search_result, envir = .GlobalEnv)
+  assign(&quot;search_result&quot;, search_result, envir = .GlobalEnv) # this creates a tibble named search_results on global environment
   
   return(search_result)
 }</code></pre>
-<p>Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds)
-and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we
-will join</p>
-<pre class="r"><code>pisa_results &lt;- readRDS(&quot;./rds/LO.PISA.REA_all_2023-09-30.rds&quot;) # assigning meaningful names 
-head(pisa_results) # just to show how the dataframe looks like </code></pre>
+<p>We chase our indicators PISA reading scores
+(LO.PISA.REA_all_2023-09-30.rds) and education expenditures
+(SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them.</p>
+<p>We could do all this dynamically, getting data in real time from the
+API, but it will cause unnecessary delay in each run of our code and put
+unnecessary load on remote server. Data we are getting is not that
+dynamic anyway, so it makes no sense to check it for updates in each
+run.</p>
+<p>Now that we have the rds files, we will import them to R as
+dataframes:</p>
+<pre class="r"><code>pisa_results &lt;- readRDS(&quot;./rds/LO.PISA.REA_all_2023-09-30.rds&quot;) # assigning pisa as dataframe</code></pre>
+<p>PISA dataframe looks like this:</p>
 <pre><code>## # A tibble: 6 × 8
 ##   indicator$id country$id countryiso3code date  value unit  obs_status decimal
 ##   &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;        &lt;int&gt;
@@ -440,8 +447,9 @@ head(pisa_results) # just to show how the dataframe looks like </code></pre>
 ## 5 LO.PISA.REA  AL         ALB             2009   385. &quot;&quot;    &quot;&quot;               0
 ## 6 LO.PISA.REA  AL         ALB             2000   349. &quot;&quot;    &quot;&quot;               0
 ## # ℹ 2 more variables: indicator$value &lt;chr&gt;, country$value &lt;chr&gt;</code></pre>
-<pre class="r"><code>expenditure &lt;- readRDS(&quot;./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds&quot;) # assigning meaningful names 
-head(expenditure) # just to show how the dataframe looks like</code></pre>
+<p>Do the same to expenditures:</p>
+<pre class="r"><code>expenditure &lt;- readRDS(&quot;./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds&quot;) # assigning expenditures as dataframe </code></pre>
+<p>And expenditures look like this:</p>
 <pre><code>## # A tibble: 6 × 8
 ##   indicator$id   country$id countryiso3code date  value unit  obs_status decimal
 ##   &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;        &lt;int&gt;
@@ -452,6 +460,13 @@ head(expenditure) # just to show how the dataframe looks like</code></pre>
 ## 5 SE.XPD.TOTL.G… ZH         AFE             2016   4.82 &quot;&quot;    &quot;&quot;               1
 ## 6 SE.XPD.TOTL.G… ZH         AFE             2015   4.82 &quot;&quot;    &quot;&quot;               1
 ## # ℹ 2 more variables: indicator$value &lt;chr&gt;, country$value &lt;chr&gt;</code></pre>
+<p>Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds)
+and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we
+will prepare these data for our analysis. A quick glance shows us that
+some country-date-value data overlaps in both dataframes, some do not.
+We have to do an inner join to select only the data that is overlapping.
+Before that, some fine tuning in our dataframes like changing the col
+names</p>
 <pre class="r"><code>cleaned_pisa &lt;- pisa_results %&gt;% # preparing the dataframe for join
   mutate(country = countryiso3code) %&gt;% 
   rename(value_pisa = value) %&gt;% 
@@ -492,7 +507,7 @@ head(joined) # joined dataframe</code></pre>
 ## 4 ALB     2012        394.      2.93
 ## 5 ALB     2000        349.      3.43
 ## 6 DZA     2015        350.      7.96</code></pre>
-<pre class="r"><code>rm(list = c(&quot;pisa_results&quot;, &quot;expenditure&quot;, &quot;cleaned_pisa&quot;, &quot;cleaned_exp&quot;)) # clean the environment from all those dataframes we created</code></pre>
+<pre class="r"><code># rm(list = c(&quot;pisa_results&quot;, &quot;expenditure&quot;, &quot;cleaned_pisa&quot;, &quot;cleaned_exp&quot;)) # clean the environment from all those dataframes we created</code></pre>
 <div id="msaffasfasfasanic" class="section level2">
 <h2>Msaffasfasfasanic</h2>
 <p>asfasasfasfsaffsa</p>
