@@ -14,6 +14,8 @@ library(tidyverse)
 library(ggplot2)
 ```
 ## Introduction
+In this analysis, we explore the relationship between two significant factors: PISA Reading Scores and Education Expenditure as a percentage of Gross Domestic Product (GDP). We aim to determine whether there exists a statistically significant association between these two variables. The analysis employs a Linear Regression Model, allowing us to examine the influence of Education Expenditure on PISA Reading Scores for various countries. The model's coefficients and statistical insights will provide us with valuable information on the relationship between these variables.
+
 ```{r, intro, echo=FALSE} 
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds")
 expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds")
@@ -27,9 +29,27 @@ cleaned_exp <- expenditure %>% # preparing the dataframe for join
   rename(value_exp = value) %>% 
   select(country, date, value_exp)
 joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date"))
-
 ```
-%explanation%
+``` {r, intro_graphs, echo=FALSE, out.width='48%'}
+ggplot(joined)+
+  geom_histogram(mapping=aes(value_pisa, color = country), binwidth = 2)+
+  guides(color = "none")+
+  labs(
+    title = "PISA Reading Scores Histogram",
+    x = "PISA Reading Scores",
+    y = "Count"
+  )
+ggplot(joined)+
+  geom_histogram(mapping=aes(value_exp, color = country), binwidth = 0.06)+
+  guides(color = "none")+
+  labs(
+    title = "Expenditure of Education (% of GDP) Histogram",
+    x = "Expenditure of Education (% of GDP)",
+    y = "Count"
+  )
+```
+
+To begin our analysis, we obtain data from the Worldbank API. We have chosen to investigate two key indicators: PISA Reading Scores and Education Expenditure (% of GDP). To efficiently retrieve data from the API, we have created a custom R function, `get_specific_id`. This function constructs the appropriate URL and fetches data from the Worldbank API. It also saves the data as RDS files for later use. Additionally, we provide a function, `search_id`, to search for specific Worldbank indicators based on keywords.
 
 ## Getting Data
 #### GET function
@@ -111,7 +131,9 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
 ```
 
 ## Preparing Data
-We chase our indicators PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them. 
+After obtaining the data, we import it into R as dataframes, creating two essential datasets: PISA Reading Scores and Education Expenditure. These datasets are saved as RDS files to ensure easy access for future analysis. We also perform some initial data cleaning and join these datasets based on common country-date pairs, creating a comprehensive dataset for our analysis. The data preparation phase ensures that we work with high-quality data for our regression analysis.
+
+We chose our indicators PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them. 
 
 We could do all this dynamically, getting data in real time from the API, but it will cause unnecessary delay in each run of our code and put unnecessary load on remote server. Data we are getting is not that dynamic anyway, so it makes no sense to check it for updates in each run. 
 
@@ -207,6 +229,28 @@ ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
   )
 
 ```
+
 #### Conclusion
 
-%conclusion_text%
+In this analysis, we've conducted a regression analysis in R to examine the relationship between PISA Reading Scores and Education Expenditure as a percentage of Gross Domestic Product (GDP). Our goal was to demonstrate the step-by-step process of conducting a regression analysis and drawing meaningful conclusions.
+
+To kickstart our analysis, we began by introducing the context and purpose of our study. We aimed to understand whether there's a statistically significant association between PISA Reading Scores and Education Expenditure, which is crucial for making informed decisions in the field of education.
+
+Before diving into the analysis, we showed how to efficiently retrieve data from the Worldbank API. We introduced a custom R function, `get_specific_id`, which allows us to fetch relevant data, saving it as RDS files for easy access in the future. Additionally, we provided the `search_id` function to search for specific Worldbank indicators based on keywords.
+
+Next, we imported the obtained data into R as dataframes, creating two essential datasets: PISA Reading Scores and Education Expenditure. These datasets were saved as RDS files for easy access in subsequent analysis. We conducted initial data cleaning and merged these datasets based on common country-date pairs, creating a comprehensive dataset for our analysis.
+
+In the analysis section, we delved into the core of our investigation—the relationship between PISA Reading Scores and Education Expenditure. We highlighted the use of a Linear Regression Model to assess the influence of Education Expenditure on PISA Reading Scores for different countries.
+
+We presented the results of our regression analysis, including crucial statistical insights:
+- Residuals: Differences between actual and predicted PISA Reading Scores.
+- Coefficients: The effect of Education Expenditure on PISA Reading Scores.
+- Residual Standard Error: The typical error in the model's predictions.
+- R-squared: The proportion of variance in PISA Reading Scores explained by Education Expenditure.
+- F-statistic: Assessing the overall significance of the model.
+
+To enhance our analysis, we created a scatterplot that visually represented the relationship between Education Expenditure and PISA Reading Scores. Each data point on the plot corresponded to a specific country, color-coded for differentiation. We also added a regression line, providing a visual representation of the linear relationship between the variables.
+
+Our analysis isn't just an academic exercise; it has real-world implications. The insights we've gained into the connection between Education Expenditure and PISA Reading Scores can inform policymakers, educators, and researchers. Understanding the impact of financial investment in education on student performance in reading assessments is crucial for making informed decisions in the education sector.
+
+In summary, our regression analysis in R serves as a practical example of how to explore and draw meaningful conclusions from real-world data. This step-by-step guide demonstrates the entire process, from data retrieval to visualization, providing a solid foundation for conducting regression analyses in R. By following this example, you can apply similar techniques to your own research, data analysis, and decision-making endeavors.

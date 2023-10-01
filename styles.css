@@ -1,67 +1,59 @@
-/* Global Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #000000;
-    margin: 20px;
+html {
+    background-color: #181818;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-    color: #0066cc;
+.container-fluid {
+    background-color: #181818;
 }
 
-/* Links */
-a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Text */
-p {
-    line-height: 1.5;
-}
-
-/* Code Blocks */
-pre, code {
-    font-family: 'Courier New', monospace;
-    background-color: #grey;
-    padding: 10px;
-}
-
-/* Lists */
-ul, ol {
-    margin-left: 20px;
-}
-
-/* Images */
-img {
-    max-width: 100%;
-}
-
-/* Tables */
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 8px;
-    text-align: left;
-}
-
-/* Customize as needed */
-
-/* Example for custom class */
-.custom-class {
-    color: #ff6600;
+.title {
+    color: #875afb;
     font-weight: bold;
 }
+
+.author {
+    color: #ffffff;
+}
+
+.date {
+    color: #ffffff;
+}
+
+#introduction h2 {
+    color: #875afb;
+    font-weight: bold;
+}
+
+p {
+    color: white
+}
+
+.r {
+    background-color: #1f1f1f
+}
+#getting-data h2 {
+    color: #875afb;
+    font-weight: bold;
+ }
+
+ #get-function h4 {
+    color:#00ae6b
+ }
+
+#finding-indicator-codes h4 {
+    color:#00ae6b
+}
+
+#searching-through-indicators h4 {
+    color:#00ae6b
+}
+
+#preparing-data h2 {
+    color: #875afb;
+    font-weight: bold;
+}
+ #join h4 {
+    color:#00ae6b
+ }
+
+
