@@ -86,14 +86,22 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
   return(search_result)
 }
 ```
+We chase our indicators PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them. 
 
-Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will join
+We could do all this dynamically, getting data in real time from the API, but it will cause unnecessary delay in each run of our code and put unnecessary load on remote server. Data we are getting is not that dynamic anyway, so it makes no sense to check it for updates in each run. 
 
-```{r cleanup}
+Now that we have the rds files, we will import them to R as dataframes:
+
+```{r startup pisa}
 pisa_results <- readRDS("./rds/LO.PISA.REA_all_2023-09-30.rds") # assigning meaningful names 
 head(pisa_results) # just to show how the dataframe looks like 
 expenditure <- readRDS("./rds/SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds") # assigning meaningful names 
 head(expenditure) # just to show how the dataframe looks like
+```
+Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will prepare these data for our analysis. A quick glance shows us that some country-date-value data overlaps in both dataframes, some do not. We have to do an inner join to select only the data that is overlapping. Before that, some fine tuning in our dataframes like changing the col names 
+
+```{r cleanup}
+
 
 cleaned_pisa <- pisa_results %>% # preparing the dataframe for join
   mutate(country = countryiso3code) %>% 
