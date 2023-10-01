@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-10-01" />
 
-<title>Linear Model with Worldbank Data</title>
+<title>Exxample: Linear Model with Worldbank Data</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -351,13 +351,22 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Linear Model with Worldbank Data</h1>
+<h1 class="title toc-ignore">Exxample: Linear Model with Worldbank
+Data</h1>
 <h4 class="author">Burak Can Serdar</h4>
 <h4 class="date">2023-10-01</h4>
 
 </div>
 
 
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>%explanation%</p>
+</div>
+<div id="getting-data" class="section level2">
+<h2>Getting Data</h2>
+<div id="get-function" class="section level4">
+<h4>GET function</h4>
 <p>We can use this function to get data from Worldbank API:</p>
 <pre class="r"><code>library(tidyverse)
 library(httr)
@@ -385,6 +394,9 @@ get_specific_id &lt;- function(country_1_code, indicator_code, number_values = 2
     return(NULL)
   }
 }</code></pre>
+</div>
+<div id="finding-indicator-codes" class="section level4">
+<h4>Finding Indicator Codes</h4>
 <p>It creates a file named ./rds/“indicator”_“date”.rds for later use.
 But how do we know which indicators are available? With this
 function:</p>
@@ -404,6 +416,9 @@ id_list &lt;-
 
 save(id_list, 
      file = &quot;id_list.rda&quot;) # outputs as rda</code></pre>
+</div>
+<div id="searching-through-indicators" class="section level4">
+<h4>Searching through Indicators</h4>
 <p>It seems there are 21020 of them. We need a way to search to be able
 to quickly browse through them. This function searches through the names
 of indicators for maximum of 3 words bound with logical AND:</p>
@@ -425,6 +440,10 @@ search_id &lt;- function(param_1, param_2 = NULL, param_3 = NULL) {
   
   return(search_result)
 }</code></pre>
+</div>
+</div>
+<div id="preparing-data" class="section level2">
+<h2>Preparing Data</h2>
 <p>We chase our indicators PISA reading scores
 (LO.PISA.REA_all_2023-09-30.rds) and education expenditures
 (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them.</p>
@@ -460,44 +479,28 @@ dataframes:</p>
 ## 5 SE.XPD.TOTL.G… ZH         AFE             2016   4.82 &quot;&quot;    &quot;&quot;               1
 ## 6 SE.XPD.TOTL.G… ZH         AFE             2015   4.82 &quot;&quot;    &quot;&quot;               1
 ## # ℹ 2 more variables: indicator$value &lt;chr&gt;, country$value &lt;chr&gt;</code></pre>
-<p>Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds)
-and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we
-will prepare these data for our analysis. A quick glance shows us that
-some country-date-value data overlaps in both dataframes, some do not.
-We have to do an inner join to select only the data that is overlapping.
-Before that, some fine tuning in our dataframes like changing the col
-names</p>
+<div id="join" class="section level4">
+<h4>Join</h4>
+<p>Now, we have our pisa_results and expenditure dataframes, we will
+prepare these data for our analysis. A quick glance shows us that some
+country-date data overlaps in both dataframes, some do not. We will only
+use countries and dates that exist in bpth data, therefore we have to do
+an inner join . Before that, some fine tuning in our dataframes like
+changing the col names so that we will know which columns is which after
+the join:</p>
 <pre class="r"><code>cleaned_pisa &lt;- pisa_results %&gt;% # preparing the dataframe for join
   mutate(country = countryiso3code) %&gt;% 
   rename(value_pisa = value) %&gt;% 
   select(country, date, value_pisa)
   
-head(cleaned_pisa) # new state</code></pre>
-<pre><code>## # A tibble: 6 × 3
-##   country date  value_pisa
-##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;
-## 1 OED     2018        487.
-## 2 ALB     2018        405.
-## 3 ALB     2015        405.
-## 4 ALB     2012        394.
-## 5 ALB     2009        385.
-## 6 ALB     2000        349.</code></pre>
-<pre class="r"><code>cleaned_exp &lt;- expenditure %&gt;% # preparing the dataframe for join
+cleaned_exp &lt;- expenditure %&gt;% # preparing the dataframe for join
   mutate(country = countryiso3code) %&gt;% 
   rename(value_exp = value) %&gt;% 
   select(country, date, value_exp)
-head(cleaned_exp) # new state</code></pre>
-<pre><code>## # A tibble: 6 × 3
-##   country date  value_exp
-##   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;
-## 1 AFE     2020       4.61
-## 2 AFE     2019       4.60
-## 3 AFE     2018       4.83
-## 4 AFE     2017       4.86
-## 5 AFE     2016       4.82
-## 6 AFE     2015       4.82</code></pre>
-<pre class="r"><code>joined &lt;- inner_join(cleaned_pisa, cleaned_exp, by = c(&quot;country&quot;, &quot;date&quot;)) # inner joining the two dataframes by their &quot;country&quot; and &quot;date&quot; column
-head(joined) # joined dataframe</code></pre>
+joined &lt;- inner_join(cleaned_pisa, cleaned_exp, by = c(&quot;country&quot;, &quot;date&quot;)) # inner joining the two dataframes by their &quot;country&quot; and &quot;date&quot; column
+
+rm(list = c(&quot;pisa_results&quot;, &quot;expenditure&quot;, &quot;cleaned_pisa&quot;, &quot;cleaned_exp&quot;)) # we won&#39;t need all those dataframes we created anymore.</code></pre>
+<p>The dataframe joined looks like this:</p>
 <pre><code>## # A tibble: 6 × 4
 ##   country date  value_pisa value_exp
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;
@@ -507,7 +510,8 @@ head(joined) # joined dataframe</code></pre>
 ## 4 ALB     2012        394.      2.93
 ## 5 ALB     2000        349.      3.43
 ## 6 DZA     2015        350.      7.96</code></pre>
-<pre class="r"><code># rm(list = c(&quot;pisa_results&quot;, &quot;expenditure&quot;, &quot;cleaned_pisa&quot;, &quot;cleaned_exp&quot;)) # clean the environment from all those dataframes we created</code></pre>
+</div>
+</div>
 <div id="msaffasfasfasanic" class="section level2">
 <h2>Msaffasfasfasanic</h2>
 <p>asfasasfasfsaffsa</p>

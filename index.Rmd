@@ -1,5 +1,5 @@
 ---
-title: "Linear Model with Worldbank Data"
+title: "Exxample: Linear Model with Worldbank Data"
 author: "Burak Can Serdar"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,11 @@ editor_options:
 library(tidyverse)
 library(ggplot2)
 ```
+## Introduction
+%explanation%
 
+## Getting Data
+#### GET function
 We can use this function to get data from Worldbank API:
 
 ```{r getting, eval=FALSE}
@@ -45,6 +49,7 @@ get_specific_id <- function(country_1_code, indicator_code, number_values = 2000
 }
 ```
 
+#### Finding Indicator Codes
 It creates a file named ./rds/"indicator"\_"date".rds for later use. But how do we know which indicators are available? With this function:
 
 ```{r indicators, eval=FALSE}
@@ -66,6 +71,7 @@ save(id_list,
      file = "id_list.rda") # outputs as rda
 ```
 
+#### Searching through Indicators
 It seems there are 21020 of them. We need a way to search to be able to quickly browse through them. This function searches through the names of indicators for maximum of 3 words bound with logical AND:
 
 ```{r search, eval=FALSE}
@@ -88,6 +94,8 @@ search_id <- function(param_1, param_2 = NULL, param_3 = NULL) {
   return(search_result)
 }
 ```
+
+## Preparing Data
 We chase our indicators PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), got them, and saved them. 
 
 We could do all this dynamically, getting data in real time from the API, but it will cause unnecessary delay in each run of our code and put unnecessary load on remote server. Data we are getting is not that dynamic anyway, so it makes no sense to check it for updates in each run. 
@@ -112,29 +120,27 @@ And expenditures look like this:
 ```{r startup_expenditure_prev, echo=FALSE}
 head(expenditure)
 ```
-
-Now, we have our PISA reading scores (LO.PISA.REA_all_2023-09-30.rds) and education expenditures (SE.XPD.TOTL.GD.ZS_all_2023-09-30.rds), we will prepare these data for our analysis. A quick glance shows us that some country-date-value data overlaps in both dataframes, some do not. We have to do an inner join to select only the data that is overlapping. Before that, some fine tuning in our dataframes like changing the col names 
+#### Join
+Now, we have our pisa_results and expenditure dataframes, we will prepare these data for our analysis. A quick glance shows us that some country-date data overlaps in both dataframes, some do not. We will only use countries and dates that exist in bpth data, therefore we have to do an inner join . Before that, some fine tuning in our dataframes like changing the col names so that we will know which columns is which after the join:
 
 ```{r cleanup}
-
-
 cleaned_pisa <- pisa_results %>% # preparing the dataframe for join
   mutate(country = countryiso3code) %>% 
   rename(value_pisa = value) %>% 
   select(country, date, value_pisa)
   
-head(cleaned_pisa) # new state
 cleaned_exp <- expenditure %>% # preparing the dataframe for join
   mutate(country = countryiso3code) %>% 
   rename(value_exp = value) %>% 
   select(country, date, value_exp)
-head(cleaned_exp) # new state
 joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date")) # inner joining the two dataframes by their "country" and "date" column
-head(joined) # joined dataframe
-# rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # clean the environment from all those dataframes we created
 
+rm(list = c("pisa_results", "expenditure", "cleaned_pisa", "cleaned_exp")) # we won't need all those dataframes we created anymore.
 ```
-
+The dataframe joined looks like this:
+``` {r joined, echo=FALSE}
+head(joined)
+```
 ## Msaffasfasfasanic
 
 asfasasfasfsaffsa
