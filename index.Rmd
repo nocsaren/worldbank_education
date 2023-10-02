@@ -1,7 +1,7 @@
 ---
 title: "Example: Linear Model with World Bank Data"
 author: "Burak Can Serdar"
-date: "`r Sys.Date()`"
+date: "2023-09-29"
 output:
   html_document:
     css: "styles.css"
