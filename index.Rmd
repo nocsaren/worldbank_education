@@ -1,5 +1,5 @@
 ---
-title: "Example: Linear Model with Worldbank Data"
+title: "Example: Linear Model with World Bank Data"
 author: "Burak Can Serdar"
 date: "`r Sys.Date()`"
 output:
@@ -34,6 +34,11 @@ joined <- inner_join(cleaned_pisa, cleaned_exp, by = c("country", "date"))
 ggplot(joined)+
   geom_histogram(mapping=aes(value_pisa, color = country), binwidth = 2)+
   guides(color = "none")+
+  theme(
+    plot.background = element_rect(fill = "#FFF1E0"), 
+    panel.background = element_rect(fill = "#F5E7D7"), 
+    text = element_text(color = "#8F5845"),
+    axis.text = element_text(color = "#8F5845"))+
   labs(
     title = "PISA Reading Scores Histogram",
     x = "PISA Reading Scores",
@@ -42,6 +47,11 @@ ggplot(joined)+
 ggplot(joined)+
   geom_histogram(mapping=aes(value_exp, color = country), binwidth = 0.06)+
   guides(color = "none")+
+  theme(
+    plot.background = element_rect(fill = "#FFF1E0"), 
+    panel.background = element_rect(fill = "#F5E7D7"), 
+    text = element_text(color = "#8F5845"),
+    axis.text = element_text(color = "#8F5845"))+
   labs(
     title = "Expenditure of Education (% of GDP) Histogram",
     x = "Expenditure of Education (% of GDP)",
@@ -217,11 +227,16 @@ Upon running the linear regression model, we receive valuable insights into the 
 
 To complement our statistical analysis, we visualize the relationship between Education Expenditure and PISA Reading Scores using a scatterplot. Each point on the plot represents a country, with the color distinguishing them. Additionally, we include a regression line, which provides a visual representation of the linear relationship between these variables.
 
-```{r regress_graph, echo=FALSE}
+```{r regress_graph, echo=FALSE, fig.align='center'}
 ggplot(data = joined, aes(x = value_exp, y = value_pisa)) +
   geom_point(mapping = aes(color = country)) +
-  geom_smooth(method = "lm", se = TRUE) +
+  geom_smooth(formula = y ~ x, method = "lm", color = "#8F5845") +
   guides(color = "none")+
+  theme(
+    plot.background = element_rect(fill = "#FFF1E0"), 
+    panel.background = element_rect(fill = "#F5E7D7"), 
+    text = element_text(color = "#8F5845"),
+    axis.text = element_text(color = "#8F5845"))+
   labs(
     title = "Expenditure of Education (% of GDP) vs. PISA Reading Scores",
     x = "Expenditure",
@@ -254,3 +269,8 @@ To enhance our analysis, we created a scatterplot that visually represented the 
 Our analysis isn't just an academic exercise; it has real-world implications. The insights we've gained into the connection between Education Expenditure and PISA Reading Scores can inform policymakers, educators, and researchers. Understanding the impact of financial investment in education on student performance in reading assessments is crucial for making informed decisions in the education sector.
 
 In summary, our regression analysis in R serves as a practical example of how to explore and draw meaningful conclusions from real-world data. This step-by-step guide demonstrates the entire process, from data retrieval to visualization, providing a solid foundation for conducting regression analyses in R. By following this example, you can apply similar techniques to your own research, data analysis, and decision-making endeavors.
+
+
+<br>
+
+### Burak Can Serdar - 2023 - All Rights Reserved

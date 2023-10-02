@@ -1,59 +1,89 @@
-html {
-    background-color: #181818;
+body {
+    background-color: #FFF1E0;
 }
 
 .container-fluid {
-    background-color: #181818;
+    background-color: #F5E7D7;
 }
 
 .title {
-    color: #875afb;
+    color: #838AA8;
     font-weight: bold;
 }
 
 .author {
-    color: #ffffff;
+    color: #83A89F;
 }
 
 .date {
-    color: #ffffff;
+    color: #83A89F;
 }
 
-#introduction h2 {
-    color: #875afb;
+h2 {
+    color: #838AA8;
     font-weight: bold;
+}
+
+h3 {
+    color: #8F5845;
+    text-align: center;
+    font-size: 8px;
+    font-style: italic;
 }
 
 p {
-    color: white
+    color: #8F5845;
+    text-align: justify;
 }
 
 .r {
-    background-color: #1f1f1f
+    background-color: #36332F
 }
-#getting-data h2 {
-    color: #875afb;
-    font-weight: bold;
+
+h4 {
+    color:#83A89F
  }
 
- #get-function h4 {
-    color:#00ae6b
- }
-
-#finding-indicator-codes h4 {
-    color:#00ae6b
+pre:not([class]) {
+    background-color: #36332F ;
+  
 }
 
-#searching-through-indicators h4 {
-    color:#00ae6b
+.math.display {
+    color: #8F5845;
+    text-align: justify;    
 }
 
-#preparing-data h2 {
-    color: #875afb;
-    font-weight: bold;
+.math.inline {
+    color:#8F5845
 }
- #join h4 {
-    color:#00ae6b
- }
 
+ul {
+    color: #8F5845;
+    text-align: justify;
+}
+
+.hljs {
+    color: #80A69F;
+}
+
+span.hljs-keyword {
+    color: #B39C92
+}
+
+span.hljs-number {
+    color: #9BA1C9;
+}
+
+span.hljs-string {
+    color:#9BA1C9
+}
+
+span.hljs-literal {
+    color: #9BA1C9
+}
+
+span.hljs-comment {
+    color: #918B77
+}
 
